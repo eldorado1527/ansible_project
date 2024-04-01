@@ -1,0 +1,33 @@
+---
+- name: install apache
+  hosts: all
+  become: true
+  tasks:
+    - name: Install Apache server
+      apt:
+        name: apache2
+        state: present
+      when: ansible_os_family == 'Debian'
+
+    - name: Install httpd for redhat
+      yum:
+        name: httpd
+        state: present
+      when: ansible_os_family == 'RedHat' 
+
+    - name: start httpd service
+      service:
+        name: httpd
+        state: started
+        enabled: yes
+      when: ansible_os_family == 'RedHat'
+
+    - name: copy webserver
+      copy:
+        src: /home/ansible/playbooks/web-training/
+        dest: /var/www/html/
+        owner: root
+        group: root
+        mode: '0644'
+
+
